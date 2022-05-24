@@ -140,3 +140,30 @@ socketConnect(roomid){
     },
 
 ```
+
+<br/>
+
+```javascript
+// 채팅방 확인 후 메시지 전송
+sendMessage(){
+      const roomNo = this.temps.id
+      const roomTitle = this.temps.title
+
+      if(this.content.trim() !='' && this.stompClient!=null) {
+          
+          let chatMessage = {
+            'title' : roomTitle,
+            'content': this.content,
+            'chatroomId' : roomNo,
+            'senderNickname':this.$store.state.userList.userNickname,
+            'senderId': this.$store.state.userList.userNo,
+            'id':"0"
+          }
+
+          this.stompClient.send("/pub/message", JSON.stringify(chatMessage),{})
+          this.content = ''
+      }
+      let MessageList = this.$refs.MessageList
+      MessageList.scrollTo({ top: MessageList.scrollHeight, behavior: 'smooth' });
+
+```
