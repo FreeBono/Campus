@@ -101,3 +101,42 @@
 1. 캠핑에 관련된 사진과 글을 공유할 수 있다.
 
 2. 내가 팔로우한 유저의 글을 우선적으로 볼 수 있다.
+
+
+## 웹 소켓 코드
+
+### Vue
+```javascript
+
+// 웹 소켓 연결(해당 채팅방의 번호를 인자로)
+
+socketConnect(roomid){
+      // socket 연결
+
+      if (this.socketStop.includes(roomid) === false) {
+  
+        // 고유 URL로 subscribe
+        let socket = new SockJS(`${SERVER_URL}/ws`)
+        this.stompClient = Stomp.over(socket)
+        
+        // 메시지를 전달
+        this.stompClient.connect({}, frame=>{
+          this.stompClient.subscribe("/sub/"+roomid, res=>{
+            let jsonBody = JSON.parse(res.body)
+            let m={
+              'senderNickname':jsonBody.senderNickname,
+              'content': jsonBody.content,
+              'style': jsonBody.senderId == this.$store.state.userList.userNo ? "d-flex justify-content-end mb-4 my":'d-flex justify-content-start mb-4 your'
+            }
+            
+              console.log(m)
+              this.MessageList.push(m)
+            
+          })
+        }, err=>{
+          console.log("fail", err)
+        })
+        }
+    },
+
+```
